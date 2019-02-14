@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Polygame</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_multiplayer">MultiplayerActivity</string>
+    <string name="title_activity_singleplayer_settings">SingleplayerSettingsActivity</string>
+    <string name="title_activity_singleplayer">SingleplayerActivity</string>
+    <string name="start_game">Start game</string>
+    <string-array name="game_difficulty">
+        <item>Easy</item>
+        <item>Hard</item>
+    </string-array>
+</resources>
