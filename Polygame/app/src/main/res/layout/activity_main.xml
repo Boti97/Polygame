@@ -25,10 +25,5 @@
             android:layout_width="155dp"
             android:layout_height="70dp" tools:layout_editor_absoluteY="386dp"
             tools:layout_editor_absoluteX="128dp" android:id="@+id/button4" />
-    <Button
-            android:text="Exit"
-            android:layout_width="155dp"
-            android:onClick="onExitClick"
-            android:layout_height="70dp" tools:layout_editor_absoluteY="456dp"
-            tools:layout_editor_absoluteX="128dp" android:id="@+id/button5" />
+
 </LinearLayout>

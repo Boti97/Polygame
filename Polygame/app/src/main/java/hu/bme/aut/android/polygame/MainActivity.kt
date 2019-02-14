@@ -45,8 +45,4 @@ class MainActivity : AppCompatActivity() {
     fun onSettingsClick(view: View){
         startActivity(Intent(this, SettingsActivity::class.java))
     }
-
-    fun onExitClick(view: View){
-        finish()
-    }
 }
