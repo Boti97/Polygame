@@ -3,12 +3,26 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="match_parent"
         tools:context=".SettingsActivity">
     <Switch
-            android:text="Music ON/OFF"
-            android:layout_width="wrap_content"
+            android:text="@string/music_on_off"
+            android:layout_width="match_parent"
+            android:padding="30dp"
             android:onClick="switchMusicClick"
-            android:layout_height="wrap_content" android:id="@+id/musicSwitch" android:layout_weight="1"
-            android:checked="true"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/musicSwitch"/>
+    <TextView
+            android:text="@string/volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:id="@+id/tvVolume"/>
+    <SeekBar
+            android:max="100"
+            android:min="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/musicSeekBar"/>
 </LinearLayout>

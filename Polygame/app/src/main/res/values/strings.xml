@@ -5,6 +5,8 @@
     <string name="title_activity_singleplayer_settings">SingleplayerSettingsActivity</string>
     <string name="title_activity_singleplayer">SingleplayerActivity</string>
     <string name="start_game">Start game</string>
+    <string name="volume">Volume:</string>
+    <string name="music_on_off">Music ON/OFF</string>
     <string-array name="game_difficulty">
         <item>Easy</item>
         <item>Hard</item>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import hu.bme.aut.android.polygame.service.BackgroundSoundService
+import kotlinx.android.synthetic.main.activity_settings.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -16,17 +17,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         svc = Intent(this, BackgroundSoundService::class.java)
         startService(svc)
+
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        startService(svc)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startService(svc)
-    }
 
 
     override fun onDestroy() {

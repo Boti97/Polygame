@@ -10,20 +10,21 @@
     <Button
             android:text="Multiplayer"
             android:onClick="onMultiplayerClick"
-            android:layout_width="155dp"
-            android:layout_height="70dp" tools:layout_editor_absoluteY="235dp"
+            android:layout_marginTop="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="235dp"
             tools:layout_editor_absoluteX="128dp" android:id="@+id/button"/>
     <Button
             android:text="Singleplayer"
-            android:layout_width="155dp"
-            android:layout_height="70dp" tools:layout_editor_absoluteY="316dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="316dp"
             android:onClick="onSingleplayerClick"
             tools:layout_editor_absoluteX="128dp" android:id="@+id/button3" />
     <Button
             android:text="Settings"
             android:onClick="onSettingsClick"
-            android:layout_width="155dp"
-            android:layout_height="70dp" tools:layout_editor_absoluteY="386dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" tools:layout_editor_absoluteY="386dp"
             tools:layout_editor_absoluteX="128dp" android:id="@+id/button4" />
 
 </LinearLayout>

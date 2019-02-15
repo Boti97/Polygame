@@ -8,7 +8,10 @@ import hu.bme.aut.android.polygame.R;
 
 public class BackgroundSoundService extends Service {
 
-    MediaPlayer player;
+    static MediaPlayer player;
+
+    public BackgroundSoundService() {
+    }
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -32,4 +35,17 @@ public class BackgroundSoundService extends Service {
         player.stop();
         player.release();
     }
+
+    public static void setVolume(float left, float right){
+        player.setVolume(left, right);
+    }
+
+    public static void pauseMusic(){
+        player.pause();
+    }
+
+    public static void restartMusic(){
+        player.start();
+    }
+
 }
