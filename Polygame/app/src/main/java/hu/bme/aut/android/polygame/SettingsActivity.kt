@@ -11,10 +11,6 @@ import kotlinx.android.synthetic.main.activity_settings.*
 import android.widget.SeekBar
 import android.media.ToneGenerator.MAX_VOLUME
 
-
-
-
-
 class SettingsActivity : AppCompatActivity() {
 
     companion object {
