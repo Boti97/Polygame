@@ -3,6 +3,7 @@ package hu.bme.aut.android.polygame
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
+import hu.bme.aut.android.polygame.model.Polygon
 
 import kotlinx.android.synthetic.main.activity_singleplayer.*
 
@@ -13,4 +14,8 @@ class SingleplayerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_singleplayer)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Polygon.resetModel()
+    }
 }
