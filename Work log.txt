@@ -8,3 +8,4 @@
 2019.02.18	1,5	Singleplayer megjelenítés
 2019.02.19	2,0	Singleplayer megjelenítés
 2019.02.19	2,5	Singleplayer megjelenítés		
+2019.02.23	5	Singleplayer megjelenítés + nehézségi szintek

@@ -22,7 +22,7 @@ public class BackgroundSoundService extends Service {
         super.onCreate();
         player = MediaPlayer.create(this, R.raw.song);
         player.setLooping(true);
-        player.setVolume(100,100);
+        player.setVolume(0,0);
     }
 
     public int onStartCommand(Intent intent, int flags, int startId){

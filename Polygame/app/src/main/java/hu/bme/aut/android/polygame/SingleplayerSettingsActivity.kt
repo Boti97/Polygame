@@ -8,10 +8,15 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import hu.bme.aut.android.polygame.model.Polygon
 
 import kotlinx.android.synthetic.main.activity_singleplayer_settings.*
 
 class SingleplayerSettingsActivity : AppCompatActivity() {
+
+    companion object {
+        var spinnerPos: Int = 0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +32,14 @@ class SingleplayerSettingsActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Toast.makeText(this@SingleplayerSettingsActivity, "Kiválasztottál valamit!", Toast.LENGTH_LONG).show()
+                spinnerPos = position
             }
 
         }
     }
 
     fun onStartClick(view: View){
+        Polygon.loadGameField(spinnerPos)
         startActivity(Intent(this, SingleplayerActivity::class.java))
     }
 

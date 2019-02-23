@@ -1,15 +1,12 @@
 package hu.bme.aut.android.polygame
 
-import android.content.Intent
-import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
-import android.view.View
-import hu.bme.aut.android.polygame.service.BackgroundSoundService
-
-import kotlinx.android.synthetic.main.activity_settings.*
-import android.widget.SeekBar
 import android.media.ToneGenerator.MAX_VOLUME
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.SeekBar
+import hu.bme.aut.android.polygame.service.BackgroundSoundService
+import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AppCompatActivity() {
 

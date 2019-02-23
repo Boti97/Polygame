@@ -9,7 +9,10 @@
 
     <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/spinner" android:layout_weight="1"/>
+            android:spinnerMode="dialog"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner"
+            android:layout_weight="1"/>
     <Button
             android:text="@string/start_game"
             android:onClick="onStartClick"

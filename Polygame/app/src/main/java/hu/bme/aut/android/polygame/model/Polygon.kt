@@ -23,16 +23,18 @@ object Polygon {
         PlayerTwo.strokeWidth = 10F
     }
 
-    var points: List<Point> = listOf(
-        Point(240F, 240F, 20F, Empty),
-        Point(240F, 480F, 20F, Empty),
-        Point(480F, 240F, 20F, Empty),
-        Point(480F, 480F, 20F, Empty)
-    )
+    var fieldPoints: MutableList<Point> = mutableListOf()
 
     fun resetModel() {
-        for (p in points) {
-            p.playerTouched = Empty
+        fieldPoints.clear()
+    }
+
+    fun loadGameField(x: Int) {
+        when(x){
+            0 -> easyField()
+            1 -> mediumField()
+            2 -> hardField()
+            3 -> veryHardField()
         }
     }
 
@@ -45,10 +47,55 @@ object Polygon {
     }
 
     fun pointTouched(x: Float, y: Float): Point{
-        for (p in points)
+        for (p in fieldPoints)
             if(p.playerTouchedPoint(x, y, nextPlayer))
                 return p
         return Point(0F,0F,0F, Empty)
+    }
+
+    private fun easyField(){
+        fieldPoints.add(Point(240F, 240F, 20F, Empty))
+        fieldPoints.add(Point(240F, 480F, 20F, Empty))
+        fieldPoints.add(Point(480F, 240F, 20F, Empty))
+        fieldPoints.add(Point(480F, 480F, 20F, Empty))
+    }
+
+    private fun mediumField() {
+        fieldPoints.add(Point(180F, 360F, 20F, Empty))
+        fieldPoints.add(Point(275F, 180F, 20F, Empty))
+        fieldPoints.add(Point(275F, 540F, 20F, Empty))
+        fieldPoints.add(Point(445F, 180F, 20F, Empty))
+        fieldPoints.add(Point(445F, 540F, 20F, Empty))
+        fieldPoints.add(Point(540F, 360F, 20F, Empty))
+    }
+
+    private fun hardField(){
+        fieldPoints.add(Point(45F, 240F, 20F, Empty))
+        fieldPoints.add(Point(45F, 480F, 20F, Empty))
+        fieldPoints.add(Point(240F, 45F, 20F, Empty))
+        fieldPoints.add(Point(240F, 675F, 20F, Empty))
+        fieldPoints.add(Point(480F, 45F, 20F, Empty))
+        fieldPoints.add(Point(480F, 675F, 20F, Empty))
+        fieldPoints.add(Point(675F, 240F, 20F, Empty))
+        fieldPoints.add(Point(675F, 480F, 20F, Empty))
+    }
+
+    private fun veryHardField(){
+        //external polygon
+        fieldPoints.add(Point(45F, 240F, 20F, Empty))
+        fieldPoints.add(Point(45F, 480F, 20F, Empty))
+        fieldPoints.add(Point(240F, 45F, 20F, Empty))
+        fieldPoints.add(Point(240F, 675F, 20F, Empty))
+        fieldPoints.add(Point(480F, 45F, 20F, Empty))
+        fieldPoints.add(Point(480F, 675F, 20F, Empty))
+        fieldPoints.add(Point(675F, 240F, 20F, Empty))
+        fieldPoints.add(Point(675F, 480F, 20F, Empty))
+
+        //internal polygon
+        fieldPoints.add(Point(290F, 290F, 20F, Empty))
+        fieldPoints.add(Point(290F, 430F, 20F, Empty))
+        fieldPoints.add(Point(430F, 290F, 20F, Empty))
+        fieldPoints.add(Point(430F, 430F, 20F, Empty))
     }
 
 }

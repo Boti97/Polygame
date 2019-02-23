@@ -9,19 +9,23 @@
     <Switch
             android:text="@string/music_on_off"
             android:layout_width="match_parent"
-            android:padding="30dp"
+            android:padding="20dp"
             android:onClick="switchMusicClick"
             android:layout_height="wrap_content"
             android:id="@+id/musicSwitch"/>
     <TextView
             android:text="@string/volume"
             android:layout_width="match_parent"
+            android:textColor="@color/primary_text"
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:id="@+id/tvVolume"/>
     <SeekBar
             android:max="100"
             android:min="0"
+            android:paddingStart="20dp"
+            android:paddingBottom="10dp"
+            android:paddingEnd="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/musicSeekBar"/>

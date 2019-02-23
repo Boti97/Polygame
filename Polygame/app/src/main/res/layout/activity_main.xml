@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -10,21 +10,27 @@
     <Button
             android:text="Multiplayer"
             android:onClick="onMultiplayerClick"
-            android:layout_marginTop="200dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" tools:layout_editor_absoluteY="235dp"
-            tools:layout_editor_absoluteX="128dp" android:id="@+id/button"/>
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="128dp" android:id="@+id/button"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     <Button
             android:text="Singleplayer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" tools:layout_editor_absoluteY="316dp"
+            android:layout_height="wrap_content"
             android:onClick="onSingleplayerClick"
-            tools:layout_editor_absoluteX="128dp" android:id="@+id/button3" />
-    <Button
-            android:text="Settings"
-            android:onClick="onSettingsClick"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" tools:layout_editor_absoluteY="386dp"
-            tools:layout_editor_absoluteX="128dp" android:id="@+id/button4" />
+            tools:layout_editor_absoluteX="128dp" android:id="@+id/button3"
+            app:layout_constraintTop_toBottomOf="@+id/button"/>
 
-</LinearLayout>
+    <android.support.v7.widget.AppCompatImageView
+            android:src="@drawable/ic_settings"
+            android:id="@+id/btnSettings"
+            android:onClick="onSettingsClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/button3" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"/>
+
+</android.support.constraint.ConstraintLayout>

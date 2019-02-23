@@ -24,4 +24,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
+    <android.support.v7.widget.Toolbar
+            android:layout_width="395dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:paddingEnd="20dp"
+            android:theme="?attr/actionBarTheme"
+            android:minHeight="?attr/actionBarSize"
+            android:id="@+id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
 </android.support.constraint.ConstraintLayout>

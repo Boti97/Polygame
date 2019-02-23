@@ -13,14 +13,20 @@ import hu.bme.aut.android.polygame.model.Polygon
 
 class PolygameView: View {
 
+    companion object {
+        lateinit var instance: PolygameView
+            private set
+    }
+
     private val signTouched = Paint()
-    var touchedPoints: MutableList<Point> = mutableListOf()
     var lines: MutableList<Line> = mutableListOf()
+    var touchedPoints: MutableList<Point> = mutableListOf()
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
     init {
+        instance = this
         signTouched.color = Color.BLACK
         signTouched.style = Paint.Style.STROKE
         signTouched.strokeWidth = 3F
@@ -39,14 +45,16 @@ class PolygameView: View {
     }
 
     private fun drawPoints(canvas: Canvas) {
-        canvas.drawCircle(240F, 240F, 20F, Polygon.points[0].playerTouched)
-        canvas.drawCircle(240F, 480F, 20F, Polygon.points[1].playerTouched)
-        canvas.drawCircle(480F, 240F, 20F, Polygon.points[2].playerTouched)
-        canvas.drawCircle(480F, 480F, 20F, Polygon.points[3].playerTouched)
+        for(p in Polygon.fieldPoints)
+            canvas.drawCircle(p.koordX, p.koordY, p.radius, p.playerTouched)
     }
 
     private fun drawLines(canvas: Canvas){
         for(l in lines){
+            if(touchedPoints.isEmpty()){
+                l.startPoint.playerTouched = l.paint
+                l.stopPoint.playerTouched = l.paint
+            }
             canvas.drawLine(
                 l.startPoint.koordX,
                 l.startPoint.koordY,
@@ -71,6 +79,27 @@ class PolygameView: View {
         setMeasuredDimension(d, d)
     }
 
+    fun playerCheck(){
+        if(touchedPoints.size == 2){
+            Polygon.changeNextPlayer()
+            touchedPoints.clear()
+            invalidate()
+        }
+    }
+
+    fun playerBack(){
+        if(!touchedPoints.isEmpty()){
+            if(touchedPoints.size == 2){
+                val lastLine = lines.size - 1
+                lines.removeAt(lastLine)
+            }
+            val lastPointIn = touchedPoints.size - 1
+            touchedPoints[lastPointIn].playerTouched = Polygon.Empty
+            touchedPoints.removeAt(lastPointIn)
+            invalidate()
+        }
+    }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -82,8 +111,6 @@ class PolygameView: View {
                         touchedPoints.add(touchedOne)
                         if (touchedPoints.size == 2) {
                             lines.add(Line(touchedPoints[0], touchedPoints[1], Polygon.nextPlayer))
-                            /*Polygon.changeNextPlayer()
-                        touchedPoints.clear()*/
                         }
                         invalidate()
                     }
