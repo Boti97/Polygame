@@ -10,42 +10,42 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".SingleplayerActivity"
+                android:name=".activity.SingleplayerActivity"
                 android:label="@string/title_activity_singleplayer"
-                android:parentActivityName=".SingleplayerSettingsActivity"
+                android:parentActivityName=".activity.SingleplayerSettingsActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.SingleplayerSettingsActivity"/>
+                    android:value="hu.bme.aut.android.polygame.activity.SingleplayerSettingsActivity"/>
         </activity>
         <activity
-                android:name=".SingleplayerSettingsActivity"
+                android:name=".activity.SingleplayerSettingsActivity"
                 android:label="@string/title_activity_singleplayer_settings"
-                android:parentActivityName=".MainActivity"
+                android:parentActivityName=".activity.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.MainActivity"/>
+                    android:value="hu.bme.aut.android.polygame.activity.MainActivity"/>
         </activity>
         <activity
-                android:name=".MultiplayerActivity"
+                android:name=".activity.MultiplayerActivity"
                 android:label="@string/title_activity_multiplayer"
-                android:parentActivityName=".MainActivity"
+                android:parentActivityName=".activity.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.MainActivity"/>
+                    android:value="hu.bme.aut.android.polygame.activity.MainActivity"/>
         </activity>
         <activity
-                android:name=".SettingsActivity"
+                android:name=".activity.SettingsActivity"
                 android:label="@string/settings"
-                android:parentActivityName=".MainActivity"
+                android:parentActivityName=".activity.MainActivity"
                 android:theme="@style/Theme.AppCompat.Light.Dialog">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.MainActivity"/>
+                    android:value="hu.bme.aut.android.polygame.activity.MainActivity"/>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

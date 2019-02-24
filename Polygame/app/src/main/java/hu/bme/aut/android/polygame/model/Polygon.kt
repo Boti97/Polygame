@@ -9,6 +9,8 @@ object Polygon {
     val PlayerOne: Paint = Paint() /*Az első játékos választotta ki utoljára*/
     val PlayerTwo: Paint = Paint() /*A második játékos választotta ki utoljára*/
     var nextPlayer: Paint = PlayerOne
+    var fieldPoints: MutableList<Point> = mutableListOf()
+    var currentLines: MutableList<Line> = mutableListOf()
 
     init {
         Empty.color = Color.BLACK
@@ -23,10 +25,9 @@ object Polygon {
         PlayerTwo.strokeWidth = 10F
     }
 
-    var fieldPoints: MutableList<Point> = mutableListOf()
-
     fun resetModel() {
         fieldPoints.clear()
+        currentLines.clear()
     }
 
     fun loadGameField(x: Int) {

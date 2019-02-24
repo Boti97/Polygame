@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import hu.bme.aut.android.polygame.logic.GameLogic
 import hu.bme.aut.android.polygame.model.Line
 import hu.bme.aut.android.polygame.model.Point
 import hu.bme.aut.android.polygame.model.Polygon
@@ -19,14 +20,15 @@ class PolygameView: View {
     }
 
     private val signTouched = Paint()
-    var lines: MutableList<Line> = mutableListOf()
     var touchedPoints: MutableList<Point> = mutableListOf()
+    var gameLogic: GameLogic = GameLogic()
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
     init {
         instance = this
+
         signTouched.color = Color.BLACK
         signTouched.style = Paint.Style.STROKE
         signTouched.strokeWidth = 3F
@@ -50,16 +52,16 @@ class PolygameView: View {
     }
 
     private fun drawLines(canvas: Canvas){
-        for(l in lines){
+        for(l in Polygon.currentLines){
             if(touchedPoints.isEmpty()){
-                l.startPoint.playerTouched = l.paint
-                l.stopPoint.playerTouched = l.paint
+                l.pointB.playerTouched = l.paint
+                l.pointA.playerTouched = l.paint
             }
             canvas.drawLine(
-                l.startPoint.koordX,
-                l.startPoint.koordY,
-                l.stopPoint.koordX,
-                l.stopPoint.koordY,
+                l.pointB.koordX,
+                l.pointB.koordY,
+                l.pointA.koordX,
+                l.pointA.koordY,
                 l.paint
             )
         }
@@ -81,6 +83,16 @@ class PolygameView: View {
 
     fun playerCheck(){
         if(touchedPoints.size == 2){
+            /*gameLogic.somethingNew(Polygon.currentLines[Polygon.currentLines.size - 1])*/
+            var line = Polygon.currentLines[Polygon.currentLines.size - 1]
+            gameLogic.setup(line)
+            gameLogic.evenBetter(line, line.pointA, line.pointB)
+            gameLogic.paintInnerPolygons()
+
+            gameLogic.lines.clear()
+            gameLogic.undoVisited()
+            gameLogic.foundPolygons.clear()
+
             Polygon.changeNextPlayer()
             touchedPoints.clear()
             invalidate()
@@ -90,8 +102,8 @@ class PolygameView: View {
     fun playerBack(){
         if(!touchedPoints.isEmpty()){
             if(touchedPoints.size == 2){
-                val lastLine = lines.size - 1
-                lines.removeAt(lastLine)
+                val lastLine = Polygon.currentLines.size - 1
+                Polygon.currentLines.removeAt(lastLine)
             }
             val lastPointIn = touchedPoints.size - 1
             touchedPoints[lastPointIn].playerTouched = Polygon.Empty
@@ -110,7 +122,7 @@ class PolygameView: View {
                     if (touchedOne.radius != 0F) {
                         touchedPoints.add(touchedOne)
                         if (touchedPoints.size == 2) {
-                            lines.add(Line(touchedPoints[0], touchedPoints[1], Polygon.nextPlayer))
+                            Polygon.currentLines.add(Line(touchedPoints[0], touchedPoints[1], Polygon.nextPlayer))
                         }
                         invalidate()
                     }

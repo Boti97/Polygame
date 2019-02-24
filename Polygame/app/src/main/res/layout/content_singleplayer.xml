@@ -8,7 +8,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_singleplayer"
         android:background="@color/primary_light"
-        tools:context=".SingleplayerActivity">
+        tools:context=".activity.SingleplayerActivity">
     
     <hu.bme.aut.android.polygame.view.PolygameView
             android:id="@+id/polygameView"

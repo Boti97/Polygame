@@ -1,10 +1,11 @@
-package hu.bme.aut.android.polygame
+package hu.bme.aut.android.polygame.activity
 
 import android.media.ToneGenerator.MAX_VOLUME
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.SeekBar
+import hu.bme.aut.android.polygame.R
 import hu.bme.aut.android.polygame.service.BackgroundSoundService
 import kotlinx.android.synthetic.main.activity_settings.*
 

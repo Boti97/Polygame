@@ -1,10 +1,8 @@
-package hu.bme.aut.android.polygame
+package hu.bme.aut.android.polygame.activity
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
-
-import kotlinx.android.synthetic.main.activity_multiplayer.*
+import hu.bme.aut.android.polygame.R
 
 class MultiplayerActivity : AppCompatActivity() {
 
