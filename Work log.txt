@@ -1,14 +1,13 @@
 2019.02.06	2	Kotlin, Java nyelvek közti átjárhatóság megismerése
 2019.02.09	2	Kotlin, Java nyelvek közti átjárhatóság megismerése
-2019.02.11	1,5	Use-Case Diagramok készítése + Projekt drótváz
-2019.02.12	3,0	Projekt drótváz
-2019.02.14	1,5	Projekt drótváz
-2019.02.15	5,5	Projekt drótváz + Játék zene szerkesztése
-2019.02.16	0,5	Projekt váz
-2019.02.18	1,5	Singleplayer megjelenítés
-2019.02.19	2,0	Singleplayer megjelenítés
-2019.02.19	2,5	Singleplayer megjelenítés		
-2019.02.23	5	Singleplayer megjelenítés + nehézségi szintek
-2019.02.23	2,5	Játéklogika
-2019.02.24	2	Játéklogika
-2019.02.24	4 	Játéklogika
+2019.02.11	1.5	Use-Case Diagramok készítése + Projekt drótváz
+2019.02.12	3.0	Projekt drótváz
+2019.02.14	1.5	Projekt drótváz
+2019.02.15	5.5	Projekt drótváz + Játék zene szerkesztése
+2019.02.16	0.5	Projekt váz
+2019.02.18	1.5	Singleplayer megjelenítés
+2019.02.19	4.5	Singleplayer megjelenítés		
+2019.02.23	7.5	Singleplayer megjelenítés + nehézségi szintek
+2019.02.24	6	Játéklogika
+2019.02.26	5.5	Játéklogika
+2019.02.27	6	Játéklogika

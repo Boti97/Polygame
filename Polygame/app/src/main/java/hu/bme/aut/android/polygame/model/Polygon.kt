@@ -5,10 +5,10 @@ import android.graphics.Paint
 
 object Polygon {
 
-    val Empty: Paint = Paint() /*Nem válaszotta ki még senki*/
-    val PlayerOne: Paint = Paint() /*Az első játékos választotta ki utoljára*/
-    val PlayerTwo: Paint = Paint() /*A második játékos választotta ki utoljára*/
-    var nextPlayer: Paint = PlayerOne
+    val Empty: Paint = Paint() 
+    val PlayerOne: Paint = Paint() 
+    val PlayerTwo: Paint = Paint() 
+    var currentPlayer: Paint = PlayerOne
     var fieldPoints: MutableList<Point> = mutableListOf()
     var currentLines: MutableList<Line> = mutableListOf()
 
@@ -28,6 +28,7 @@ object Polygon {
     fun resetModel() {
         fieldPoints.clear()
         currentLines.clear()
+        currentPlayer = PlayerOne
     }
 
     fun loadGameField(x: Int) {
@@ -40,18 +41,34 @@ object Polygon {
     }
 
     fun changeNextPlayer() {
-        if (nextPlayer == PlayerOne) {
-            nextPlayer = PlayerTwo
+        if (currentPlayer == PlayerOne) {
+            currentPlayer = PlayerTwo
         } else {
-            nextPlayer = PlayerOne
+            currentPlayer = PlayerOne
         }
     }
 
     fun pointTouched(x: Float, y: Float): Point{
         for (p in fieldPoints)
-            if(p.playerTouchedPoint(x, y, nextPlayer))
+            if(p.playerTouchedPoint(x, y, currentPlayer))
                 return p
         return Point(0F,0F,0F, Empty)
+    }
+
+    fun lineAlreadyExist(line: Line): Boolean{
+        for(l in currentLines){
+            if(l.pointA == line.pointA && l.pointB == line.pointB || l.pointB == line.pointA && l.pointA == line.pointB)
+                return true
+        }
+        return false
+    }
+
+    fun linesContainsPoint(point: Point):Paint{
+        for(l in currentLines){
+            if(l.pointA == point || l.pointB == point)
+                return l.paint
+        }
+        return Polygon.Empty
     }
 
     private fun easyField(){

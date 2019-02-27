@@ -16,12 +16,11 @@ class PolygameView: View {
 
     companion object {
         lateinit var instance: PolygameView
-            private set
     }
 
     private val signTouched = Paint()
     var touchedPoints: MutableList<Point> = mutableListOf()
-    var gameLogic: GameLogic = GameLogic()
+    var gameLogic: GameLogic = GameLogic(context)
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -83,20 +82,26 @@ class PolygameView: View {
 
     fun playerCheck(){
         if(touchedPoints.size == 2){
-            /*gameLogic.somethingNew(Polygon.currentLines[Polygon.currentLines.size - 1])*/
-            var line = Polygon.currentLines[Polygon.currentLines.size - 1]
-            gameLogic.setup(line)
-            gameLogic.evenBetter(line, line.pointA, line.pointB)
+            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
+            gameLogic.setupAndFindPolygons(line)
             gameLogic.paintInnerPolygons()
+            gameLogic.setScore()
 
-            gameLogic.lines.clear()
-            gameLogic.undoVisited()
-            gameLogic.foundPolygons.clear()
+            gameLogic.clearGameLogic()
 
             Polygon.changeNextPlayer()
             touchedPoints.clear()
+            ScoreBoard.instance.restart()
             invalidate()
         }
+    }
+
+    fun playerOutOfTime(){
+        playerBack()
+        playerBack()
+        Polygon.changeNextPlayer()
+        ScoreBoard.instance.restart()
+        invalidate()
     }
 
     fun playerBack(){
@@ -105,9 +110,9 @@ class PolygameView: View {
                 val lastLine = Polygon.currentLines.size - 1
                 Polygon.currentLines.removeAt(lastLine)
             }
-            val lastPointIn = touchedPoints.size - 1
-            touchedPoints[lastPointIn].playerTouched = Polygon.Empty
-            touchedPoints.removeAt(lastPointIn)
+            val lastIndex = touchedPoints.size - 1
+            touchedPoints[lastIndex].playerTouched = Polygon.linesContainsPoint(touchedPoints[lastIndex])
+            touchedPoints.removeAt(touchedPoints.size - 1)
             invalidate()
         }
     }
@@ -118,11 +123,20 @@ class PolygameView: View {
                 if(touchedPoints.size != 2) {
                     val tX = event.x
                     val tY = event.y
-                    var touchedOne = Polygon.pointTouched(tX, tY)
+                    val touchedOne = Polygon.pointTouched(tX, tY)
                     if (touchedOne.radius != 0F) {
                         touchedPoints.add(touchedOne)
                         if (touchedPoints.size == 2) {
-                            Polygon.currentLines.add(Line(touchedPoints[0], touchedPoints[1], Polygon.nextPlayer))
+                            if(touchedPoints[0] == touchedOne)
+                                touchedPoints.remove(touchedOne)
+                            else {
+                                val line = Line(touchedPoints[0], touchedPoints[1], Polygon.currentPlayer)
+                                if (Polygon.lineAlreadyExist(line)) {
+                                    Polygon.currentLines.add(line)
+                                    playerBack()
+                                } else
+                                    Polygon.currentLines.add(line)
+                            }
                         }
                         invalidate()
                     }

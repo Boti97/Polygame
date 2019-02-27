@@ -3,6 +3,7 @@ package hu.bme.aut.android.polygame.model
 import android.graphics.Paint
 
 class Point(x: Float, y: Float, r: Float, player: Paint) {
+
     val koordX: Float = x
     val koordY: Float = y
     val radius: Float = r
