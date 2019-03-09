@@ -189,13 +189,11 @@ class GameLogic(context: Context) {
 
     fun clearGameLogic(){
         allFoundPolygons.addAll(cleanedPolygons)
-
         foundPolygons.clear()
         cleanedPolygons.clear()
         sortedPolygons.clear()
         lines.clear()
         undoVisited()
     }
-
 
 }

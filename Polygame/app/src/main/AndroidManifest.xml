@@ -11,6 +11,7 @@
             android:theme="@style/AppTheme">
         <activity
                 android:name=".activity.SingleplayerActivity"
+                android:screenOrientation="portrait"
                 android:label="@string/title_activity_singleplayer"
                 android:parentActivityName=".activity.SingleplayerSettingsActivity"
                 android:theme="@style/AppTheme.NoActionBar">

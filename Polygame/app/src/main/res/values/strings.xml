@@ -13,6 +13,16 @@
     <string name="playerOne">Player One: %1$d</string>
     <string name="playerTwo">Player Two: %1$d</string>
     <string name="time_remaining">Time Remaining: %1$d</string>
+    <string name="playerOneWon">Player One won!</string>
+    <string name="playerTwoWon">Player Two won!</string>
+    <string name="draw">Draw!</string>
+    <string name="whosthewinner">GameResult</string>
+    <string name="ok">OK</string>
+    <string name="rematch">REMATCH</string>
+    <string name="singleplayer">Singleplayer</string>
+    <string name="multiplayer">Multiplayer</string>
+    <string name="accountname">AccountName</string>
+    <string name="account_problem">Nem sikerült valami!</string>
     <string-array name="game_difficulty">
         <item>Easy</item>
         <item>Medium</item>

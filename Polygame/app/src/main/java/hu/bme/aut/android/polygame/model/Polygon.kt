@@ -26,7 +26,8 @@ object Polygon {
     }
 
     fun resetModel() {
-        fieldPoints.clear()
+        for(p in fieldPoints)
+            p.playerTouched = Empty
         currentLines.clear()
         currentPlayer = PlayerOne
     }
@@ -71,7 +72,18 @@ object Polygon {
         return Polygon.Empty
     }
 
+    fun allLinesTaken():Boolean{
+        for (p1 in fieldPoints){
+            for (p2 in fieldPoints){
+                if(p1 != p2 && !lineAlreadyExist(Line(p1, p2, Polygon.Empty)))
+                    return false
+            }
+        }
+        return true
+    }
+
     private fun easyField(){
+        fieldPoints.clear()
         fieldPoints.add(Point(240F, 240F, 20F, Empty))
         fieldPoints.add(Point(240F, 480F, 20F, Empty))
         fieldPoints.add(Point(480F, 240F, 20F, Empty))
@@ -79,6 +91,7 @@ object Polygon {
     }
 
     private fun mediumField() {
+        fieldPoints.clear()
         fieldPoints.add(Point(180F, 360F, 20F, Empty))
         fieldPoints.add(Point(275F, 180F, 20F, Empty))
         fieldPoints.add(Point(275F, 540F, 20F, Empty))
@@ -88,6 +101,7 @@ object Polygon {
     }
 
     private fun hardField(){
+        fieldPoints.clear()
         fieldPoints.add(Point(45F, 240F, 20F, Empty))
         fieldPoints.add(Point(45F, 480F, 20F, Empty))
         fieldPoints.add(Point(240F, 45F, 20F, Empty))
@@ -99,6 +113,7 @@ object Polygon {
     }
 
     private fun veryHardField(){
+        fieldPoints.clear()
         //external polygon
         fieldPoints.add(Point(45F, 240F, 20F, Empty))
         fieldPoints.add(Point(45F, 480F, 20F, Empty))

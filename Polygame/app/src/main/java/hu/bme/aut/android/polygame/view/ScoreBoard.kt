@@ -1,15 +1,26 @@
 package hu.bme.aut.android.polygame.view
 
 import android.content.Context
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import hu.bme.aut.android.polygame.R
+import hu.bme.aut.android.polygame.fragment.ResultDialog
 import kotlinx.android.synthetic.main.score_board_view.view.*
 
 class ScoreBoard: ConstraintLayout{
-    constructor(context: Context) : super(context)
+
+    private var playerOnePoint: Int = 0
+    private var playerTwoPoint: Int = 0
+    private lateinit var scoreContext: Context
+
+    constructor(context: Context) : super(context){
+        scoreContext = context
+    }
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
@@ -27,9 +38,6 @@ class ScoreBoard: ConstraintLayout{
         }
     }
 
-
-    private var playerOnePoint: Int = 0
-    private var playerTwoPoint: Int = 0
     init {
         instance = this
 
@@ -60,4 +68,15 @@ class ScoreBoard: ConstraintLayout{
         tvTime.text = resources.getString(R.string.time_remaining, remainingTime)
     }
 
+    fun getPlayerOneScore():Int = playerOnePoint
+
+    fun getPlayerTwoScore():Int = playerTwoPoint
+
+    fun resetScoreBoard(){
+        playerOnePoint = 0
+        playerTwoPoint = 0
+        tvPlayerOne.text = resources.getString(R.string.playerOne, playerOnePoint)
+        tvPlayerTwo.text = resources.getString(R.string.playerTwo, playerTwoPoint)
+        restart()
+    }
 }
