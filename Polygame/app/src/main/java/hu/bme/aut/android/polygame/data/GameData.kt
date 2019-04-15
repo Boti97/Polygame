@@ -1,7 +1,7 @@
 package hu.bme.aut.android.polygame.data
 
-class GameData {
-    /*
-    Singel/Multyplayer current state
-    * */
-}
+import hu.bme.aut.android.polygame.model.Line
+import hu.bme.aut.android.polygame.model.Point
+
+class GameData(var fieldPoints: MutableList<Point> = mutableListOf(),
+               var currentLines: MutableList<Line> = mutableListOf()) {}

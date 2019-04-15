@@ -1,15 +1,11 @@
 package hu.bme.aut.android.polygame.view
 
 import android.content.Context
-import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.constraint.ConstraintLayout
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import hu.bme.aut.android.polygame.R
-import hu.bme.aut.android.polygame.fragment.ResultDialog
 import kotlinx.android.synthetic.main.score_board_view.view.*
 
 class ScoreBoard: ConstraintLayout{
@@ -34,7 +30,6 @@ class ScoreBoard: ConstraintLayout{
             override fun onTick(millisUntilFinished: Long) {
                 instance.changeTimeRemaining((millisUntilFinished/1000))
             }
-
         }
     }
 

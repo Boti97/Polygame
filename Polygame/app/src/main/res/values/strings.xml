@@ -1,5 +1,8 @@
 <resources>
+    <string name="error_get_inbox_intent">There was a problem getting the inbox intent!</string>
+    <string name="error_get_select_opponents">There was a problem getting the select opponents intent!</string>
     <string name="app_name">Polygame</string>
+    <string name="app_id">1038738491481</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_multiplayer">MultiplayerActivity</string>
     <string name="title_activity_singleplayer_settings">SingleplayerSettingsActivity</string>
@@ -23,6 +26,11 @@
     <string name="multiplayer">Multiplayer</string>
     <string name="accountname">AccountName</string>
     <string name="account_problem">Nem sikerült valami!</string>
+    <string name="playername">PlayerName</string>
+    <string name="playerid">PlayerId</string>
+    <string name="start">Start</string>
+    <string name="sign_in_error">Sign in error!</string>
+    <string name="signin_other_error">Sign in error!</string>
     <string-array name="game_difficulty">
         <item>Easy</item>
         <item>Medium</item>

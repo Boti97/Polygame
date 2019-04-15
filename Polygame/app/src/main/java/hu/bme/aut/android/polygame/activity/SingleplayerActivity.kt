@@ -35,7 +35,7 @@ class SingleplayerActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.singleplayer_menu, menu)
+        menuInflater.inflate(R.menu.game_menu, menu)
         return true
     }
 
@@ -59,7 +59,6 @@ class SingleplayerActivity : AppCompatActivity() {
         val fm = supportFragmentManager
         resultDialog.setupResults(ScoreBoard.instance.getPlayerOneScore(), ScoreBoard.instance.getPlayerTwoScore())
         resultDialog.show(fm, "resultdialog_tag")
-
     }
 
     fun onOkClick(view: View){

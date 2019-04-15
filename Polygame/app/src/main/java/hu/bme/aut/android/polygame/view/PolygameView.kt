@@ -4,16 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.os.Parcelable
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import hu.bme.aut.android.polygame.activity.MainActivity
 import hu.bme.aut.android.polygame.activity.SingleplayerActivity
-import hu.bme.aut.android.polygame.fragment.ResultDialog
 import hu.bme.aut.android.polygame.logic.GameLogic
 import hu.bme.aut.android.polygame.model.Line
 import hu.bme.aut.android.polygame.model.Point
@@ -110,6 +104,20 @@ class PolygameView : View {
                 SingleplayerActivity.instance.createResultDialog()
             }
         }
+    }
+
+    fun playerCheckMulti(): Boolean{
+        var isChecked = false
+        if(touchedPoints.size == 2){
+            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
+            gameLogic.setupAndFindPolygons(line)
+            gameLogic.paintInnerPolygons()
+            gameLogic.setScore()
+
+            gameLogic.clearGameLogic()//kérdéses
+            isChecked = true
+        }
+        return isChecked
     }
 
     fun playerOutOfTime() {

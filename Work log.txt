@@ -14,3 +14,12 @@
 2019.02.28.	1	Eredmény megjelenítése
 2019.03.07.	1.5	Google Play Console megismerése
 2019.03.09.	5	Google Play Console megismerése
+2019.03.15.	3	Multiplayer mód implementálása
+2019.03.16.	2	Multiplayer mód implementálása
+2019.03.17.	4	Multiplayer mód implementálása
+2019.03.18.	3	Multiplayer mód implementálása
+2019.03.30.	2	Google Sign In
+2019.04.05.	2	Google Sign In
+2019.04.11.	8	Multiplayer mód implementálása
+2019.04.12.	7	Multiplayer mód implementálása
+2019.04.12.	5.5	Multiplayer mód implementálása
