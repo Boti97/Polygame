@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="hu.bme.aut.android.polygame">
+          package="hu.aut.bme.android.polygame">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -19,50 +19,50 @@
         <meta-data android:name="com.google.android.gms.version"
                    android:value="@integer/google_play_services_version" />
         <activity
-                android:name="hu.bme.aut.android.polygame.activity.SingleplayerActivity"
+                android:name="hu.aut.bme.android.polygame.activity.SingleplayerActivity"
                 android:screenOrientation="portrait"
                 android:label="@string/title_activity_singleplayer"
-                android:parentActivityName="hu.bme.aut.android.polygame.activity.SingleplayerSettingsActivity"
+                android:parentActivityName="hu.aut.bme.android.polygame.activity.SingleplayerSettingsActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.activity.SingleplayerSettingsActivity"/>
+                    android:value="hu.aut.bme.android.polygame.activity.SingleplayerSettingsActivity"/>
         </activity>
         <activity
-                android:name="hu.bme.aut.android.polygame.activity.SingleplayerSettingsActivity"
+                android:name="hu.aut.bme.android.polygame.activity.SingleplayerSettingsActivity"
                 android:label="@string/title_activity_singleplayer_settings"
-                android:parentActivityName="hu.bme.aut.android.polygame.activity.MainActivity"
+                android:parentActivityName="hu.aut.bme.android.polygame.activity.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.activity.MainActivity"/>
+                    android:value="hu.aut.bme.android.polygame.activity.MainActivity"/>
         </activity>
         <activity
-                android:name="hu.bme.aut.android.polygame.activity.MultiplayerActivity"
+                android:name="hu.aut.bme.android.polygame.activity.MultiplayerActivity"
                 android:label="@string/title_activity_multiplayer"
-                android:parentActivityName="hu.bme.aut.android.polygame.activity.MainActivity"
+                android:parentActivityName="hu.aut.bme.android.polygame.activity.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.activity.MainActivity"/>
+                    android:value="hu.aut.bme.android.polygame.activity.MainActivity"/>
         </activity>
         <activity
-                android:name="hu.bme.aut.android.polygame.activity.SettingsActivity"
+                android:name="hu.aut.bme.android.polygame.activity.SettingsActivity"
                 android:label="@string/settings"
-                android:parentActivityName="hu.bme.aut.android.polygame.activity.MainActivity"
+                android:parentActivityName="hu.aut.bme.android.polygame.activity.MainActivity"
                 android:theme="@style/Theme.AppCompat.Light.Dialog">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="hu.bme.aut.android.polygame.activity.MainActivity"/>
+                    android:value="hu.aut.bme.android.polygame.activity.MainActivity"/>
         </activity>
-        <activity android:name="hu.bme.aut.android.polygame.activity.MainActivity">
+        <activity android:name="hu.aut.bme.android.polygame.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <service android:enabled="true" android:name="hu.bme.aut.android.polygame.service.BackgroundSoundService"/>
+        <service android:enabled="true" android:name="hu.aut.bme.android.polygame.service.BackgroundSoundService"/>
     </application>
 
 </manifest>

@@ -10,7 +10,7 @@
         android:background="@color/primary_light"
         tools:context=".activity.SingleplayerActivity">
 
-    <hu.bme.aut.android.polygame.view.ScoreBoard
+    <hu.aut.bme.android.polygame.view.ScoreBoard
             android:layout_width="match_parent"
             android:layout_height="114dp"
             android:layout_marginTop="8dp"
@@ -18,7 +18,7 @@
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/polygameView"/>
     
-    <hu.bme.aut.android.polygame.view.PolygameView
+    <hu.aut.bme.android.polygame.view.PolygameView
             android:id="@+id/polygameView"
             android:layout_marginBottom="0dp"
             android:layout_marginEnd="0dp"

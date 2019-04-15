@@ -2,7 +2,7 @@
     <string name="error_get_inbox_intent">There was a problem getting the inbox intent!</string>
     <string name="error_get_select_opponents">There was a problem getting the select opponents intent!</string>
     <string name="app_name">Polygame</string>
-    <string name="app_id">1038738491481</string>
+    <string name="app_id">926542191578</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_multiplayer">MultiplayerActivity</string>
     <string name="title_activity_singleplayer_settings">SingleplayerSettingsActivity</string>

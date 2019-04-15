@@ -9,7 +9,7 @@
         tools:showIn="@layout/activity_multiplayer"
         tools:context=".activity.MultiplayerActivity">
 
-    <hu.bme.aut.android.polygame.view.ScoreBoard
+    <hu.aut.bme.android.polygame.view.ScoreBoard
             android:layout_width="match_parent"
             android:layout_height="114dp"
             android:layout_marginTop="8dp"
@@ -17,7 +17,7 @@
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:id="@+id/scoreBoard"/>
 
-    <hu.bme.aut.android.polygame.view.PolygameView
+    <hu.aut.bme.android.polygame.view.PolygameView
             android:id="@+id/polygameViewMulti"
             android:layout_marginBottom="0dp"
             android:layout_marginEnd="0dp"
