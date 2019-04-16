@@ -1,7 +1,7 @@
 package hu.aut.bme.android.polygame.activity
 
-import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -11,114 +11,57 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.TurnBasedMultiplayerClient
-import com.google.android.gms.games.multiplayer.Multiplayer
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchUpdateCallback
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import hu.aut.bme.android.polygame.R
 import hu.aut.bme.android.polygame.data.GameData
+import hu.aut.bme.android.polygame.logic.GameLogic
 import hu.aut.bme.android.polygame.model.Polygon
-import hu.aut.bme.android.polygame.view.PolygameView
 import kotlinx.android.synthetic.main.content_multiplayer.*
+import java.nio.charset.Charset
 
-class MultiplayerActivity : AppCompatActivity() {
+class MultiplayerActivity : AppCompatActivity(){
 
-    private val RC_SELECT_PLAYERS = 9010
     var clientAccount: GoogleSignInAccount? = null
     private var mTurnBasedMultiplayerClient: TurnBasedMultiplayerClient? = null
     private var match: TurnBasedMatch? = null
-
-
-    private val mMatchUpdateCallback = object : TurnBasedMatchUpdateCallback() {
-        override fun onTurnBasedMatchReceived(turnBasedMatch: TurnBasedMatch) {
-            deserializeGameData(turnBasedMatch.data)
-            Toast.makeText(this@MultiplayerActivity, "A match was updated.", Toast.LENGTH_LONG).show()
-        }
-
-        override fun onTurnBasedMatchRemoved(matchId: String) {
-            Toast.makeText(this@MultiplayerActivity, "A match was removed.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun deserializeGameData(data: ByteArray?) {
-        val polyTypeToken = object : TypeToken<GameData>() {}.type
-        val polyFromJson: Polygon = Gson().fromJson(data.toString(), polyTypeToken)
-        Polygon.currentLines = polyFromJson.currentLines
-        Polygon.fieldPoints = polyFromJson.fieldPoints
-        PolygameView.instance.invalidate()
-    }
+    private var gameLogic: GameLogic = GameLogic(this)
+    private val MATCH_TURN_STATUS_MY_TURN = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_multiplayer)
-        clientAccount = GoogleSignIn.getLastSignedInAccount(this)
-
-        onStartMatchClicked()
-
         setSupportActionBar(toolbarMulti)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-    }
 
-    private fun onStartMatchClicked() {
-        val allowAutoMatch = true
+        clientAccount = GoogleSignIn.getLastSignedInAccount(this)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+
         mTurnBasedMultiplayerClient = Games.getTurnBasedMultiplayerClient(this, clientAccount!!)
         mTurnBasedMultiplayerClient!!.registerTurnBasedMatchUpdateCallback(mMatchUpdateCallback)
-        mTurnBasedMultiplayerClient!!.getSelectOpponentsIntent(1, 1, allowAutoMatch)
-            .addOnSuccessListener { intent -> startActivityForResult(intent, RC_SELECT_PLAYERS) }
+        match = MainActivity.mMatch
+        multiplayerScore.setTime("∞")
+        if(match!!.turnStatus == MATCH_TURN_STATUS_MY_TURN) onTurnStatusChange(false)
+        else onTurnStatusChange(true)
+        if(match!!.data==null)
+            startGameTurn()
+
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SELECT_PLAYERS) {
-            if (resultCode != Activity.RESULT_OK) {
-                finish()
-                return
-            }
-
-            val invitees = data!!.getStringArrayListExtra (Games.EXTRA_PLAYER_IDS)
-
-            // Get automatch criteria
-            val autoMatchCriteria: Bundle? = null
-            val minAutoPlayers = data.getIntExtra (Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0)
-            val maxAutoPlayers = data.getIntExtra (Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0)
-
-            val builder = TurnBasedMatchConfig.builder ()
-                .addInvitedPlayers(invitees)
-            if (minAutoPlayers > 0) {
-                builder.setAutoMatchCriteria(
-                    RoomConfig.createAutoMatchCriteria(minAutoPlayers, maxAutoPlayers, 0)
-                )
-            }
-            mTurnBasedMultiplayerClient!!.createMatch(builder.build()).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    match = task.result
-
-                } else {
-                    // There was an error. Show the error.
-                    var status = CommonStatusCodes.DEVELOPER_ERROR
-                    val exception = task.exception
-                    if (exception is ApiException) {
-                        val apiException = exception as ApiException?
-                        status = apiException!!.statusCode
-                    }
-                    handleError(status, exception)
-                }
-            }
+    private fun onTurnStatusChange(status: Boolean){
+        if(status){
+            pbWaiting.visibility = View.VISIBLE
+            multiplayerPolyView.viewTouchable = false
+            tvTurnStatus.text = resources.getString(R.string.their_turn)
         }
-    }
-
-    private fun handleError(status: Int, exception: Exception?) {
-        AlertDialog.Builder(this).setMessage(exception!!.message)
-            .setNeutralButton(R.string.ok, null).show()
-        serializeGameData()
+        else {
+            tvTurnStatus.text = resources.getString(R.string.your_turn)
+            multiplayerPolyView.viewTouchable = true
+            pbWaiting.visibility = View.GONE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -130,11 +73,11 @@ class MultiplayerActivity : AppCompatActivity() {
         when (item!!.itemId) {
             R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.menu_check -> {
-                if (PolygameView.instance.playerCheckMulti())
+                if (playerCheckMulti())
                     playTurn()
             }
             R.id.menu_back -> {
-                PolygameView.instance.playerBack()
+                multiplayerPolyView.playerBack()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -174,13 +117,38 @@ class MultiplayerActivity : AppCompatActivity() {
         // This calls a game specific method to get the bytes that represent the game state
         // including the current player's turn.
         val gameData = serializeGameData()
+        multiplayerPolyView.touchedPoints.clear()
+        multiplayerPolyView.invalidate()
 
         mTurnBasedMultiplayerClient!!.takeTurn(match!!.matchId, gameData, nextParticipantId)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val match = task.result
+                    match = task.result
+                    onTurnStatusChange(true)
                 } else {
-                    // Handle exceptions.
+                    val exception = task.exception
+                    AlertDialog.Builder(this).setMessage(exception!!.message)
+                        .setNeutralButton(R.string.ok, null).show()
+                }
+            }
+    }
+
+    private fun startGameTurn() {
+
+        val myPlayerId = match!!.getParticipantId(MainActivity.mPlayer!!.playerId)
+
+        // This calls a game specific method to get the bytes that represent the game state
+        // including the current player's turn.
+        val gameData = serializeGameData()
+
+        mTurnBasedMultiplayerClient!!.takeTurn(match!!.matchId, gameData, myPlayerId)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    match = task.result
+                } else {
+                    val exception = task.exception
+                    AlertDialog.Builder(this).setMessage(exception!!.message)
+                        .setNeutralButton(R.string.ok, null).show()
                 }
             }
     }
@@ -189,10 +157,69 @@ class MultiplayerActivity : AppCompatActivity() {
         val polyTypeToken = object : TypeToken<GameData>() {}.type
         val polyGameData = GameData(Polygon.fieldPoints, Polygon.currentLines)
         val json = Gson().toJson(polyGameData, polyTypeToken).toString()
-
-        return json.toByteArray()
+        return json.toByteArray(Charset.forName("UTF-8"))
     }
 
+    private fun initializeGameData(data: ByteArray?) {
+        val polyTypeToken = object : TypeToken<GameData>() {}.type
+        val polyFromJson: GameData = Gson().fromJson(data!!.toString(Charset.forName("UTF-8")), polyTypeToken)
+        Polygon.currentLines = polyFromJson.currentLines
+        Polygon.fieldPoints = polyFromJson.fieldPoints
+        if(match!!.getParticipant(MainActivity.mPlayer!!.playerId).participantId == "p_1")
+            Polygon.currentPlayer = Polygon.PlayerOne
+        else
+            Polygon.currentPlayer = Polygon.PlayerTwo
+        multiplayerPolyView.invalidate()
+    }
 
+    private val mMatchUpdateCallback = object : TurnBasedMatchUpdateCallback() {
+        override fun onTurnBasedMatchReceived(turnBasedMatch: TurnBasedMatch) {
+            initializeGameData(turnBasedMatch.data)
+            onTurnStatusChange(false)
+            Toast.makeText(this@MultiplayerActivity, "A match was updated.", Toast.LENGTH_LONG).show()
+        }
+
+        override fun onTurnBasedMatchRemoved(matchId: String) {
+            Toast.makeText(this@MultiplayerActivity, "A match was removed.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun playerCheckMulti(): Boolean{
+        var isChecked = false
+        if(multiplayerPolyView.touchedPoints.size == 2){
+            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
+            gameLogic.setupAndFindPolygons(line)
+            gameLogic.paintInnerPolygons()
+            gameLogic.setScore()
+
+            gameLogic.clearGameLogic()//kérdéses
+            isChecked = true
+        }
+        return isChecked
+    }
+
+    /*fun playerOutOfTime() {
+        multiplayerPolyView.playerBack()
+        multiplayerPolyView.playerBack()
+        Polygon.changeNextPlayer()
+        restartTimer()
+        multiplayerPolyView.invalidate()
+        Toast.makeText(this, "Lejárt az időd!", Toast.LENGTH_LONG).show()
+    }*/
+
+    /*private val timer = object: CountDownTimer(30000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            multiplayerScore.setTime(resources.getString(R.string.time_remaining, millisUntilFinished/1000))
+        }
+
+        override fun onFinish() {
+            playerOutOfTime()
+        }
+    }*/
+
+    /*private fun restartTimer(){
+        timer.cancel()
+        timer.start()
+    }*/
 }
 

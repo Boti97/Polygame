@@ -9,9 +9,7 @@ import hu.aut.bme.android.polygame.view.ScoreBoard
 
 class GameLogic(context: Context) {
 
-    private class InternalPolygon(lines: MutableList<Line>) {
-        var lines: MutableList<Line> = lines
-    }
+    private class InternalPolygon(var lines: MutableList<Line>)
 
     private lateinit var polyStartPoint:Point
     private lateinit var polyEndPoint:Point
@@ -67,15 +65,13 @@ class GameLogic(context: Context) {
         }
     }
 
-    fun setScore(){
+    fun setScore(): Int{
+        var sum = 0
+
         for(p in cleanedPolygons){
-            if(Polygon.currentPlayer == Polygon.PlayerOne){
-                ScoreBoard.instance.setPlayerOneScore(p.lines.size)
-            }
-            else{
-                ScoreBoard.instance.setPlayerTwoScore(p.lines.size)
-            }
+            sum+=p.lines.size
         }
+        return sum
     }
 
     private fun undoVisited() {

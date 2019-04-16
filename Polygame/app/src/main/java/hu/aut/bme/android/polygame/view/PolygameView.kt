@@ -15,20 +15,14 @@ import hu.aut.bme.android.polygame.model.Polygon
 
 class PolygameView : View {
 
-    companion object {
-        lateinit var instance: PolygameView
-    }
-
     private val signTouched = Paint()
     var touchedPoints: MutableList<Point> = mutableListOf()
-    var gameLogic: GameLogic = GameLogic(context)
+    var viewTouchable: Boolean = true
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
     init {
-        instance = this
-
         signTouched.color = Color.BLACK
         signTouched.style = Paint.Style.STROKE
         signTouched.strokeWidth = 3F
@@ -86,50 +80,8 @@ class PolygameView : View {
         setMeasuredDimension(d, d)
     }
 
-    fun playerCheck() {
-        if (touchedPoints.size == 2) {
-            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
-            gameLogic.setupAndFindPolygons(line)
-            gameLogic.paintInnerPolygons()
-            gameLogic.setScore()
-
-            gameLogic.clearGameLogic()
-
-            Polygon.changeNextPlayer()
-            touchedPoints.clear()
-            ScoreBoard.instance.restart()
-            invalidate()
-
-            if (Polygon.allLinesTaken()) {
-                SingleplayerActivity.instance.createResultDialog()
-            }
-        }
-    }
-
-    fun playerCheckMulti(): Boolean{
-        var isChecked = false
-        if(touchedPoints.size == 2){
-            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
-            gameLogic.setupAndFindPolygons(line)
-            gameLogic.paintInnerPolygons()
-            gameLogic.setScore()
-
-            gameLogic.clearGameLogic()//kérdéses
-            isChecked = true
-        }
-        return isChecked
-    }
-
-    fun playerOutOfTime() {
-        playerBack()
-        playerBack()
-        Polygon.changeNextPlayer()
-        ScoreBoard.instance.restart()
-        invalidate()
-    }
-
     fun playerBack() {
-        if (!touchedPoints.isEmpty()) {
+        if (touchedPoints.isNotEmpty()) {
             if (touchedPoints.size == 2) {
                 val lastLine = Polygon.currentLines.size - 1
                 Polygon.currentLines.removeAt(lastLine)
@@ -142,6 +94,9 @@ class PolygameView : View {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if(!viewTouchable){
+            return true
+        }
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (touchedPoints.size != 2) {
@@ -169,11 +124,5 @@ class PolygameView : View {
             }
             else -> return super.onTouchEvent(event)
         }
-    }
-
-    fun clearPolygonAndGameLogic(){
-        Polygon.resetModel()
-        gameLogic.clearGameLogic()
-        invalidate()
     }
 }

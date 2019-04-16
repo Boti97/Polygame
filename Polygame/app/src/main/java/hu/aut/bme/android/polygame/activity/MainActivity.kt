@@ -1,9 +1,9 @@
 package hu.aut.bme.android.polygame.activity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
@@ -12,31 +12,37 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.Player
 import com.google.android.gms.games.TurnBasedMultiplayerClient
 import com.google.android.gms.games.multiplayer.Multiplayer
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch
-import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import hu.aut.bme.android.polygame.R
+import hu.aut.bme.android.polygame.data.GameData
 import hu.aut.bme.android.polygame.model.Polygon
 import hu.aut.bme.android.polygame.service.BackgroundSoundService
 import kotlinx.android.synthetic.main.activity_main.*
-
+import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity() {
 
     companion object{
         var mPlayer: Player? = null
+        var mMatch: TurnBasedMatch? = null
     }
 
-    var clientAccount: GoogleSignInAccount? = null
+    private var clientAccount: GoogleSignInAccount? = null
     private var svc: Intent? = null
     private val RC_SIGN_IN = 9001
     private var mTurnBasedMultiplayerClient: TurnBasedMultiplayerClient? = null
     private val RC_LOOK_AT_MATCHES = 10001
-
-
+    private val RC_SELECT_PLAYERS = 9010
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,19 +90,79 @@ class MainActivity : AppCompatActivity() {
                     .setNeutralButton(R.string.ok, null).show()
             }
         }
+
         else if (requestCode == RC_LOOK_AT_MATCHES){
             if (resultCode != Activity.RESULT_OK) {
                 return
             }
-            val match = intent
-                .getParcelableExtra<TurnBasedMatch>(Multiplayer.EXTRA_TURN_BASED_MATCH)
+            val match = data!!.getParcelableExtra<TurnBasedMatch>(Multiplayer.EXTRA_TURN_BASED_MATCH)
 
-            Toast.makeText(this, "LOL", Toast.LENGTH_LONG).show()
-            /*if (match != null) {
-                updateMatch(match)
-            }*/
-
+            if(match!=null) {
+                mMatch = match
+                initializeGameData(mMatch!!.data)
+                startActivity((Intent(this, MultiplayerActivity::class.java)))
+            }
         }
+
+        else if (requestCode == RC_SELECT_PLAYERS) {
+            if (resultCode != Activity.RESULT_OK) {
+                return
+            }
+            val invitees = data!!.getStringArrayListExtra (Games.EXTRA_PLAYER_IDS)
+
+            val minAutoPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0)
+            val maxAutoPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0)
+
+            val builder = TurnBasedMatchConfig.builder()
+                .addInvitedPlayers(invitees)
+            if (minAutoPlayers > 0) {
+                builder.setAutoMatchCriteria(
+                    RoomConfig.createAutoMatchCriteria(minAutoPlayers, maxAutoPlayers, 0)
+                )
+            }
+            mTurnBasedMultiplayerClient!!.createMatch(builder.build()).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    mMatch = task.result
+                    if(mMatch!!.data!= null) {
+                        initializeGameData(mMatch!!.data)
+                        startActivity((Intent(this, MultiplayerActivity::class.java)))
+                    }
+                    else {
+                        Polygon.resetModel()
+                        Polygon.loadGameField(1)
+                        startActivity((Intent(this, MultiplayerActivity::class.java)))
+                    }
+
+                } else {
+                    // There was an error. Show the error.
+                    var status = CommonStatusCodes.DEVELOPER_ERROR
+                    val exception = task.exception
+                    if (exception is ApiException) {
+                        val apiException = exception as ApiException?
+                        status = apiException!!.statusCode
+                    }
+                    handleError(status, exception)
+                }
+            }
+        }
+
+    }
+
+    private fun initializeGameData(data: ByteArray?) {
+        val polyTypeToken = object : TypeToken<GameData>() {}.type
+        val polyFromJson: GameData = Gson().fromJson(data!!.toString(Charset.forName("UTF-8")), polyTypeToken)
+        Polygon.resetModel()
+        Polygon.currentLines = polyFromJson.currentLines
+        Polygon.fieldPoints = polyFromJson.fieldPoints
+        if(mMatch!!.getParticipantId(mPlayer!!.playerId) == "p_1")
+            Polygon.currentPlayer = Polygon.PlayerOne
+        else
+            Polygon.currentPlayer = Polygon.PlayerTwo
+    }
+
+    private fun handleError(status: Int, exception: Exception?) {
+        android.support.v7.app.AlertDialog.Builder(this).setMessage(exception!!.message)
+            .setNeutralButton(R.string.ok, null).show()
     }
 
     private fun signInSilently() {
@@ -157,15 +223,14 @@ class MainActivity : AppCompatActivity() {
             R.id.btnSettings -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.btnSinglePlayer -> startActivity(Intent(this, SingleplayerSettingsActivity::class.java))
             R.id.btnMuliPlayer -> {
-                Polygon.resetModel()
-                Polygon.loadGameField(1)
-                startActivity((Intent(this, MultiplayerActivity::class.java)))
+                onStartMatchClicked()
             }
         }
     }
 
     private fun updateUI() {
         tvAccountName.text = mPlayer!!.displayName
+        Games.getGamesClient(this, clientAccount!!).setViewForPopups(findViewById(R.id.main_activity))
         Games.getGamesClient(this, clientAccount!!)
             .setGravityForPopups(Gravity.TOP or Gravity.CENTER_HORIZONTAL)
     }
@@ -177,15 +242,22 @@ class MainActivity : AppCompatActivity() {
 
     fun onCheckGamesClicked(view: View) {
         mTurnBasedMultiplayerClient!!.inboxIntent
-            .addOnSuccessListener(OnSuccessListener<Intent> { intent ->
+            .addOnSuccessListener { intent ->
                 startActivityForResult(
                     intent,
                     RC_LOOK_AT_MATCHES
                 )
-            })
+            }
             .addOnFailureListener{
                 android.app.AlertDialog.Builder(this).setMessage(R.string.error_get_inbox_intent)
                     .setNeutralButton(R.string.ok, null).show()
             }
+    }
+
+    private fun onStartMatchClicked() {
+        val allowAutoMatch = true
+        mTurnBasedMultiplayerClient = Games.getTurnBasedMultiplayerClient(this, clientAccount!!)
+        mTurnBasedMultiplayerClient!!.getSelectOpponentsIntent(1, 1, allowAutoMatch)
+            .addOnSuccessListener { intent -> startActivityForResult(intent, RC_SELECT_PLAYERS) }
     }
 }

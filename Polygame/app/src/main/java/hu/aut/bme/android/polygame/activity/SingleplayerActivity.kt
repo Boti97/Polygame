@@ -2,33 +2,36 @@ package hu.aut.bme.android.polygame.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import hu.aut.bme.android.polygame.R
 import hu.aut.bme.android.polygame.fragment.ResultDialog
+import hu.aut.bme.android.polygame.logic.GameLogic
 import hu.aut.bme.android.polygame.model.Polygon
-import hu.aut.bme.android.polygame.view.PolygameView
-import hu.aut.bme.android.polygame.view.ScoreBoard
 import kotlinx.android.synthetic.main.content_singleplayer.*
 
-class SingleplayerActivity : AppCompatActivity() {
+class SingleplayerActivity : AppCompatActivity(){
 
     private val resultDialog = ResultDialog()
-    private val PLAYER_ONE_KEY = "player_one_key"
-    private val PLAYER_TWO_KEY = "player_two_key"
+    private var gameLogic: GameLogic = GameLogic(this)
 
-
-    companion object {
-        lateinit var instance: SingleplayerActivity
+    private val timer = object: CountDownTimer(30000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            singleplayerScore.setTime(resources.getString(R.string.time_remaining, millisUntilFinished/1000))
+        }
+        override fun onFinish() {
+            playerOutOfTime()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        instance = this
 
         setContentView(R.layout.activity_singleplayer)
+        timer.start()
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -42,9 +45,9 @@ class SingleplayerActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
             R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
-            R.id.menu_check -> PolygameView.instance.playerCheck()
+            R.id.menu_check -> playerCheck()
             R.id.menu_back -> {
-                PolygameView.instance.playerBack()
+                singleplayerPolyView.playerBack()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -55,9 +58,9 @@ class SingleplayerActivity : AppCompatActivity() {
         Polygon.resetModel()
     }
 
-    fun createResultDialog() {
+    private fun createResultDialog() {
         val fm = supportFragmentManager
-        resultDialog.setupResults(ScoreBoard.instance.getPlayerOneScore(), ScoreBoard.instance.getPlayerTwoScore())
+        resultDialog.setupResults(singleplayerScore.getPlayerOneScore(), singleplayerScore.getPlayerTwoScore())
         resultDialog.show(fm, "resultdialog_tag")
     }
 
@@ -67,10 +70,50 @@ class SingleplayerActivity : AppCompatActivity() {
     }
 
     fun onRematchClick(view: View){
-        PolygameView.instance.clearPolygonAndGameLogic()
-        ScoreBoard.instance.resetScoreBoard()
+        clearPolygonAndGameLogic()
+        singleplayerScore.resetScoreBoard()
+        restartTimer()
         resultDialog.dismiss()
     }
 
+    private fun playerCheck() {
+        if (singleplayerPolyView.touchedPoints.size == 2) {
+            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
+            gameLogic.setupAndFindPolygons(line)
+            gameLogic.paintInnerPolygons()
+            val sum = gameLogic.setScore()
+            if(Polygon.currentPlayer == Polygon.PlayerOne)
+                singleplayerScore.setPlayerOneScore(sum)
+            else
+                singleplayerScore.setPlayerTwoScore(sum)
+            gameLogic.clearGameLogic()
 
+            Polygon.changeNextPlayer()
+            singleplayerPolyView.touchedPoints.clear()
+            restartTimer()
+            singleplayerPolyView.invalidate()
+            if (Polygon.allLinesTaken()) {
+                createResultDialog()
+            }
+        }
+    }
+
+    fun playerOutOfTime() {
+        singleplayerPolyView.playerBack()
+        singleplayerPolyView.playerBack()
+        Polygon.changeNextPlayer()
+        restartTimer()
+        singleplayerPolyView.invalidate()
+    }
+
+    private fun clearPolygonAndGameLogic(){
+        Polygon.resetModel()
+        gameLogic.clearGameLogic()
+        singleplayerPolyView.invalidate()
+    }
+
+    private fun restartTimer(){
+        timer.cancel()
+        timer.start()
+    }
 }

@@ -42,4 +42,6 @@
         <item>Player vs AI</item>
         <item>AI vs AI</item>
     </string-array>
+    <string name="your_turn">It is your turn!</string>
+    <string name="their_turn">Waiting for the opponent!</string>
 </resources>
