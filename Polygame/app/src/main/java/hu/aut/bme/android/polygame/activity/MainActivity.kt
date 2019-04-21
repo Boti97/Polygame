@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
-import android.widget.Toast
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,7 +31,8 @@ import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity() {
 
-    companion object{
+    companion object {
+        var gameDataByte: ByteArray? = null
         var mPlayer: Player? = null
         var mMatch: TurnBasedMatch? = null
     }
@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                         AlertDialog.Builder(this).setMessage("There was a problem getting the player!")
                             .setNeutralButton(R.string.ok, null).show()
                     }
+                Games.getAchievementsClient(this, clientAccount!!).unlock(getString(R.string.first_timer))
             } else {
                 var message = result.status.statusMessage
                 if (message == null || message.isEmpty()) {
@@ -99,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
             if(match!=null) {
                 mMatch = match
-                initializeGameData(mMatch!!.data)
+                gameDataByte = mMatch!!.data
                 startActivity((Intent(this, MultiplayerActivity::class.java)))
             }
         }
@@ -124,10 +125,11 @@ class MainActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     mMatch = task.result
                     if(mMatch!!.data!= null) {
-                        initializeGameData(mMatch!!.data)
+                        gameDataByte = mMatch!!.data
                         startActivity((Intent(this, MultiplayerActivity::class.java)))
                     }
                     else {
+                        gameDataByte = null
                         Polygon.resetModel()
                         Polygon.loadGameField(1)
                         startActivity((Intent(this, MultiplayerActivity::class.java)))
@@ -145,19 +147,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-    }
-
-    private fun initializeGameData(data: ByteArray?) {
-        val polyTypeToken = object : TypeToken<GameData>() {}.type
-        val polyFromJson: GameData = Gson().fromJson(data!!.toString(Charset.forName("UTF-8")), polyTypeToken)
-        Polygon.resetModel()
-        Polygon.currentLines = polyFromJson.currentLines
-        Polygon.fieldPoints = polyFromJson.fieldPoints
-        if(mMatch!!.getParticipantId(mPlayer!!.playerId) == "p_1")
-            Polygon.currentPlayer = Polygon.PlayerOne
-        else
-            Polygon.currentPlayer = Polygon.PlayerTwo
     }
 
     private fun handleError(status: Int, exception: Exception?) {
@@ -260,4 +249,22 @@ class MainActivity : AppCompatActivity() {
         mTurnBasedMultiplayerClient!!.getSelectOpponentsIntent(1, 1, allowAutoMatch)
             .addOnSuccessListener { intent -> startActivityForResult(intent, RC_SELECT_PLAYERS) }
     }
+
+    /*private fun initializeGameData(data: ByteArray?) {
+        gameDataByte = data
+
+        val polyTypeToken = object : TypeToken<GameData>() {}.type
+        gameData = Gson().fromJson(data!!.toString(Charset.forName("UTF-8")), polyTypeToken)
+
+
+        Polygon.resetModel()
+        Polygon.currentLines.clear()
+        Polygon.currentLines.addAll(gameData!!.currentLines)
+        Polygon.fieldPoints.clear()
+        Polygon.fieldPoints.addAll(gameData!!.fieldPoints)
+        if(mMatch!!.getParticipantId(mPlayer!!.playerId) == "p_1")
+            Polygon.currentPlayer = Polygon.PlayerOne
+        else
+            Polygon.currentPlayer = Polygon.PlayerTwo
+    }*/
 }

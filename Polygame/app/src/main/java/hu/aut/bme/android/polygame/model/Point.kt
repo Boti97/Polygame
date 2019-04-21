@@ -1,18 +1,16 @@
 package hu.aut.bme.android.polygame.model
 
-import android.graphics.Paint
-
-class Point(x: Float, y: Float, r: Float, player: Paint) {
+class Point(x: Float, y: Float, r: Float, playerColor: PlayerColor) {
 
     val koordX: Float = x
     val koordY: Float = y
     val radius: Float = r
 
-    var playerTouched: Paint = player
+    var playerTouched: PlayerColor = playerColor
 
-    fun playerTouchedPoint(x: Float, y: Float, player: Paint): Boolean{
+    fun playerTouchedPoint(x: Float, y: Float, playerColor: PlayerColor): Boolean{
         if(x > koordX-(radius+10) && x < koordX+(radius+10) && y > koordY-(radius+10) && y < koordY+(radius+10)){
-            playerTouched = player
+            playerTouched = playerColor
             return true
         }
         return false

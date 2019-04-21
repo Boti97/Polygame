@@ -1,10 +1,8 @@
 package hu.aut.bme.android.polygame.model
 
-import android.graphics.Paint
-
-class Line(startP: Point, stopP: Point, color: Paint) {
+class Line(startP: Point, stopP: Point, color: PlayerColor) {
     val pointB: Point = startP
     val pointA: Point = stopP
-    var paint: Paint = color
+    var paint: PlayerColor = color
     var visited: Boolean = false
 }

@@ -44,4 +44,8 @@
     </string-array>
     <string name="your_turn">It is your turn!</string>
     <string name="their_turn">Waiting for the opponent!</string>
+
+    <string name="first_timer">CgkI2rff0fsaEAIQAQ</string>
+    <string name="first_win">CgkI2rff0fsaEAIQAg</string>
+    <string name="beginner">CgkI2rff0fsaEAIQAw</string>
 </resources>

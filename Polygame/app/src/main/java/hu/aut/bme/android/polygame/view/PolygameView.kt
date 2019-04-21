@@ -10,6 +10,7 @@ import android.view.View
 import hu.aut.bme.android.polygame.activity.SingleplayerActivity
 import hu.aut.bme.android.polygame.logic.GameLogic
 import hu.aut.bme.android.polygame.model.Line
+import hu.aut.bme.android.polygame.model.PlayerColor
 import hu.aut.bme.android.polygame.model.Point
 import hu.aut.bme.android.polygame.model.Polygon
 
@@ -18,14 +19,33 @@ class PolygameView : View {
     private val signTouched = Paint()
     var touchedPoints: MutableList<Point> = mutableListOf()
     var viewTouchable: Boolean = true
+    private val Empty: Paint = Paint()
+    private val PlayerOne: Paint = Paint()
+    private val PlayerTwo: Paint = Paint()
+    private val PlayerUnknown: Paint = Paint()
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
     init {
+        Empty.color = Color.BLACK
+        Empty.style = Paint.Style.FILL
+
+        PlayerOne.color = Color.BLUE
+        PlayerOne.style = Paint.Style.FILL
+        PlayerOne.strokeWidth = 10F
+
+        PlayerTwo.color = Color.RED
+        PlayerTwo.style = Paint.Style.FILL
+        PlayerTwo.strokeWidth = 10F
+
         signTouched.color = Color.BLACK
         signTouched.style = Paint.Style.STROKE
         signTouched.strokeWidth = 3F
+
+        PlayerUnknown.color = Color.CYAN
+        PlayerUnknown.style = Paint.Style.FILL
+        PlayerUnknown.strokeWidth = 10F
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -42,7 +62,7 @@ class PolygameView : View {
 
     private fun drawPoints(canvas: Canvas) {
         for (p in Polygon.fieldPoints)
-            canvas.drawCircle(p.koordX, p.koordY, p.radius, p.playerTouched)
+            canvas.drawCircle(p.koordX, p.koordY, p.radius, findPlayerColor(p.playerTouched))
     }
 
     private fun drawLines(canvas: Canvas) {
@@ -56,8 +76,17 @@ class PolygameView : View {
                 l.pointB.koordY,
                 l.pointA.koordX,
                 l.pointA.koordY,
-                l.paint
+                findPlayerColor(l.paint)
             )
+        }
+    }
+
+    private fun findPlayerColor(playerColor: PlayerColor): Paint{
+        return when(playerColor){
+            PlayerColor.BLACK -> Empty
+            PlayerColor.BLUE -> PlayerOne
+            PlayerColor.RED -> PlayerTwo
+            else -> PlayerUnknown
         }
     }
 

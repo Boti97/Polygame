@@ -10,6 +10,7 @@ import android.view.View
 import hu.aut.bme.android.polygame.R
 import hu.aut.bme.android.polygame.fragment.ResultDialog
 import hu.aut.bme.android.polygame.logic.GameLogic
+import hu.aut.bme.android.polygame.model.PlayerColor
 import hu.aut.bme.android.polygame.model.Polygon
 import kotlinx.android.synthetic.main.content_singleplayer.*
 
@@ -35,6 +36,7 @@ class SingleplayerActivity : AppCompatActivity(){
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
+        Polygon.resetModel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -78,21 +80,19 @@ class SingleplayerActivity : AppCompatActivity(){
 
     private fun playerCheck() {
         if (singleplayerPolyView.touchedPoints.size == 2) {
-            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
-            gameLogic.setupAndFindPolygons(line)
+            gameLogic.setupAndFindPolygons()
             gameLogic.paintInnerPolygons()
             val sum = gameLogic.setScore()
-            if(Polygon.currentPlayer == Polygon.PlayerOne)
+            if(Polygon.currentPlayer == PlayerColor.BLUE)
                 singleplayerScore.setPlayerOneScore(sum)
             else
                 singleplayerScore.setPlayerTwoScore(sum)
             gameLogic.clearGameLogic()
-
             Polygon.changeNextPlayer()
             singleplayerPolyView.touchedPoints.clear()
             restartTimer()
             singleplayerPolyView.invalidate()
-            if (Polygon.allLinesTaken()) {
+            if (singleplayerScore.getPlayerOneScore() >= 10 || singleplayerScore.getPlayerTwoScore() >= 10) {
                 createResultDialog()
             }
         }

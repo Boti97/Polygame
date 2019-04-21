@@ -24,7 +24,7 @@ class GameLogic(context: Context) {
         lines.add(line)
         line.visited = true
 
-        if (lineEndPoint == polyEndPoint && lines.size > 2) {
+        if (pointsEquals(lineEndPoint,polyEndPoint) && lines.size > 2) {
             val foundlines = lines.toMutableList()
             val innerPolygon = InternalPolygon(foundlines)
             lines.remove(line)
@@ -36,9 +36,9 @@ class GameLogic(context: Context) {
         for (l in Polygon.currentLines) {
             if (l != line && !l.visited) {
                 if (linesConnect(l, line)) {
-                    if (l.pointA == lineEndPoint)
+                    if (pointsEquals(l.pointA, lineEndPoint))
                         findInternalPolygons(l, l.pointB)
-                    else if (l.pointB == lineEndPoint)
+                    else if (pointsEquals(l.pointB,lineEndPoint))
                         findInternalPolygons(l, l.pointA)
                 }
             }
@@ -48,7 +48,8 @@ class GameLogic(context: Context) {
         return
     }
 
-    fun setupAndFindPolygons(line: Line) {
+    fun setupAndFindPolygons() {
+        val line = Polygon.currentLines[Polygon.currentLines.size - 1]
         polyStartPoint = line.pointB
         polyEndPoint = line.pointA
         findInternalPolygons(line, polyStartPoint)
@@ -80,7 +81,16 @@ class GameLogic(context: Context) {
     }
 
     private fun linesConnect(lineA: Line, lineB: Line): Boolean {
-        if (lineA.pointA == lineB.pointA || lineA.pointA == lineB.pointB || lineA.pointB == lineB.pointA || lineA.pointB == lineB.pointB)
+        if(pointsEquals(lineA.pointA, lineB.pointA)
+            || pointsEquals(lineA.pointA, lineB.pointB)
+            || pointsEquals(lineA.pointB, lineB.pointA)
+            || pointsEquals(lineA.pointB, lineB.pointB))
+            return true
+        return false
+    }
+
+    private fun pointsEquals(pointA: Point, pointB: Point): Boolean{
+        if(pointA.koordX == pointB.koordX && pointA.koordY == pointB.koordY)
             return true
         return false
     }

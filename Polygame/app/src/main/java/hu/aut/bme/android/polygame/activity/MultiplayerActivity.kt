@@ -1,7 +1,6 @@
 package hu.aut.bme.android.polygame.activity
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -19,7 +18,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import hu.aut.bme.android.polygame.R
 import hu.aut.bme.android.polygame.data.GameData
+import hu.aut.bme.android.polygame.fragment.ResultDialog
 import hu.aut.bme.android.polygame.logic.GameLogic
+import hu.aut.bme.android.polygame.model.PlayerColor
 import hu.aut.bme.android.polygame.model.Polygon
 import kotlinx.android.synthetic.main.content_multiplayer.*
 import java.nio.charset.Charset
@@ -27,12 +28,13 @@ import java.nio.charset.Charset
 class MultiplayerActivity : AppCompatActivity(){
 
     var clientAccount: GoogleSignInAccount? = null
+    private val resultDialog = ResultDialog()
     private var mTurnBasedMultiplayerClient: TurnBasedMultiplayerClient? = null
     private var match: TurnBasedMatch? = null
     private var gameLogic: GameLogic = GameLogic(this)
     private val MATCH_TURN_STATUS_MY_TURN = 1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_multiplayer)
         setSupportActionBar(toolbarMulti)
@@ -41,14 +43,19 @@ class MultiplayerActivity : AppCompatActivity(){
         supportActionBar!!.setDisplayShowTitleEnabled(false)
 
         mTurnBasedMultiplayerClient = Games.getTurnBasedMultiplayerClient(this, clientAccount!!)
-        mTurnBasedMultiplayerClient!!.registerTurnBasedMatchUpdateCallback(mMatchUpdateCallback)
+        mTurnBasedMultiplayerClient!!.registerTurnBasedMatchUpdateCallback(matchUpdateCallback)
+
         match = MainActivity.mMatch
-        multiplayerScore.setTime("∞")
-        if(match!!.turnStatus == MATCH_TURN_STATUS_MY_TURN) onTurnStatusChange(false)
-        else onTurnStatusChange(true)
-        if(match!!.data==null)
+        MainActivity.mMatch = null
+        if(MainActivity.gameDataByte!=null)
+            initializeGameData(MainActivity.gameDataByte)
+        else
             startGameTurn()
 
+        multiplayerScore.setTime("∞")
+
+        if (match!!.turnStatus == MATCH_TURN_STATUS_MY_TURN) onTurnStatusChange(false)
+        else onTurnStatusChange(true)
     }
 
     private fun onTurnStatusChange(status: Boolean){
@@ -117,8 +124,6 @@ class MultiplayerActivity : AppCompatActivity(){
         // This calls a game specific method to get the bytes that represent the game state
         // including the current player's turn.
         val gameData = serializeGameData()
-        multiplayerPolyView.touchedPoints.clear()
-        multiplayerPolyView.invalidate()
 
         mTurnBasedMultiplayerClient!!.takeTurn(match!!.matchId, gameData, nextParticipantId)
             .addOnCompleteListener { task ->
@@ -155,28 +160,39 @@ class MultiplayerActivity : AppCompatActivity(){
 
     private fun serializeGameData(): ByteArray? {
         val polyTypeToken = object : TypeToken<GameData>() {}.type
-        val polyGameData = GameData(Polygon.fieldPoints, Polygon.currentLines)
+        val polyGameData = GameData(Polygon.fieldPoints, Polygon.currentLines,
+            multiplayerScore.getPlayerOneScore(), multiplayerScore.getPlayerTwoScore())
         val json = Gson().toJson(polyGameData, polyTypeToken).toString()
         return json.toByteArray(Charset.forName("UTF-8"))
     }
 
     private fun initializeGameData(data: ByteArray?) {
         val polyTypeToken = object : TypeToken<GameData>() {}.type
-        val polyFromJson: GameData = Gson().fromJson(data!!.toString(Charset.forName("UTF-8")), polyTypeToken)
-        Polygon.currentLines = polyFromJson.currentLines
-        Polygon.fieldPoints = polyFromJson.fieldPoints
-        if(match!!.getParticipant(MainActivity.mPlayer!!.playerId).participantId == "p_1")
-            Polygon.currentPlayer = Polygon.PlayerOne
+        val gameData: GameData = Gson().fromJson(data!!.toString(Charset.forName("UTF-8")), polyTypeToken)
+        Polygon.currentLines = gameData.currentLines
+        /*multiplayerPolyView.touchedPoints.add(Polygon.currentLines[Polygon.currentLines.size-1].pointA)
+        multiplayerPolyView.touchedPoints.add(Polygon.currentLines[Polygon.currentLines.size-1].pointB)*/
+        Polygon.fieldPoints = gameData.fieldPoints
+        if(match!!.getParticipantId(MainActivity.mPlayer!!.playerId) == "p_1")
+            Polygon.currentPlayer = PlayerColor.BLUE
         else
-            Polygon.currentPlayer = Polygon.PlayerTwo
+            Polygon.currentPlayer = PlayerColor.RED
+        multiplayerScore.setPlayerOneScore(gameData.playerOneScore)
+        multiplayerScore.setPlayerTwoScore(gameData.playerTwoScore)
         multiplayerPolyView.invalidate()
     }
 
-    private val mMatchUpdateCallback = object : TurnBasedMatchUpdateCallback() {
+    private val matchUpdateCallback = object : TurnBasedMatchUpdateCallback() {
         override fun onTurnBasedMatchReceived(turnBasedMatch: TurnBasedMatch) {
-            initializeGameData(turnBasedMatch.data)
-            onTurnStatusChange(false)
-            Toast.makeText(this@MultiplayerActivity, "A match was updated.", Toast.LENGTH_LONG).show()
+            match = turnBasedMatch
+            if (turnBasedMatch.turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                initializeGameData(turnBasedMatch.data)
+                onTurnStatusChange(false)
+                Toast.makeText(this@MultiplayerActivity, "A match was updated.", Toast.LENGTH_LONG).show()
+                checkWinner()
+            }
+            else
+                Toast.makeText(this@MultiplayerActivity, "Player joined.", Toast.LENGTH_LONG).show()
         }
 
         override fun onTurnBasedMatchRemoved(matchId: String) {
@@ -187,15 +203,71 @@ class MultiplayerActivity : AppCompatActivity(){
     private fun playerCheckMulti(): Boolean{
         var isChecked = false
         if(multiplayerPolyView.touchedPoints.size == 2){
-            val line = Polygon.currentLines[Polygon.currentLines.size - 1]
-            gameLogic.setupAndFindPolygons(line)
+            gameLogic.setupAndFindPolygons()
             gameLogic.paintInnerPolygons()
-            gameLogic.setScore()
+            paintPoints()
+            Polygon.fieldPoints
+            Polygon.currentLines
+            val sum = gameLogic.setScore()
+            if(Polygon.currentPlayer == PlayerColor.BLUE)
+                multiplayerScore.setPlayerOneScore(sum)
+            else
+                multiplayerScore.setPlayerTwoScore(sum)
+            gameLogic.clearGameLogic()
+            multiplayerPolyView.touchedPoints.clear()
+            multiplayerPolyView.invalidate()
 
-            gameLogic.clearGameLogic()//kérdéses
             isChecked = true
+            checkWinner()
         }
         return isChecked
+    }
+
+    private fun checkWinner(){
+        if (multiplayerScore.getPlayerOneScore() >= 10) {
+            if (match!!.getParticipantId(MainActivity.mPlayer!!.playerId) == "p_1") {
+                Games.getAchievementsClient(this, clientAccount!!).unlock(getString(R.string.first_win))
+                Games.getAchievementsClient(this, clientAccount!!).increment(getString(R.string.beginner), 1)
+            }
+            createResultDialog()
+        } else if(multiplayerScore.getPlayerTwoScore() >= 10) {
+            if (match!!.getParticipantId(MainActivity.mPlayer!!.playerId) == "p_2") {
+                Games.getAchievementsClient(this, clientAccount!!).unlock(getString(R.string.first_win))
+                Games.getAchievementsClient(this, clientAccount!!).increment(getString(R.string.beginner), 1)
+            }
+            createResultDialog()
+        }
+    }
+
+    private fun paintPoints() {
+        for(point in Polygon.fieldPoints){
+            point.playerTouched = Polygon.linesContainsPoint(point)
+        }
+    }
+
+    private fun createResultDialog() {
+        val fm = supportFragmentManager
+        resultDialog.setupResults(multiplayerScore.getPlayerOneScore(), multiplayerScore.getPlayerTwoScore())
+        resultDialog.show(fm, "resultdialog_tag")
+    }
+
+    fun onOkClick(view: View){
+        resultDialog.dismiss()
+        finish()
+    }
+
+    fun onRematchClick(view: View){
+        clearPolygonAndGameLogic()
+        multiplayerScore.resetScoreBoard()
+        resultDialog.dismiss()
+        //nincs implementálva
+        finish()
+    }
+
+    private fun clearPolygonAndGameLogic(){
+        Polygon.resetModel()
+        gameLogic.clearGameLogic()
+        multiplayerPolyView.invalidate()
     }
 
     /*fun playerOutOfTime() {
@@ -221,5 +293,7 @@ class MultiplayerActivity : AppCompatActivity(){
         timer.cancel()
         timer.start()
     }*/
+
+
 }
 

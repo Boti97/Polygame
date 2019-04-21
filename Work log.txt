@@ -22,6 +22,9 @@
 2019.04.05.	2	Google Sign In
 2019.04.11.	8	Multiplayer mód implementálása
 2019.04.12.	7	Multiplayer mód implementálása
-2019.04.12.	5,5	Multiplayer mód implementálása
-2019.04.12.	7,5	Multiplayer mód implementálása
-2019.04.12.	7	Multiplayer mód implementálása
+2019.04.13.	5,5	Multiplayer mód implementálása
+2019.04.14.	7,5	Multiplayer mód implementálása
+2019.04.15.	9	Multiplayer mód implementálása
+2019.04.16.	3,5	Megjelenítési hibák javítása
+2019.04.19.	4	Megjelenítési hibák javítása
+2019.04.19.	3	Megjelenítési hibák javítása
