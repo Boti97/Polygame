@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,14 +22,10 @@ import com.google.android.gms.games.multiplayer.Multiplayer
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import hu.aut.bme.android.polygame.R
-import hu.aut.bme.android.polygame.data.GameData
 import hu.aut.bme.android.polygame.model.Polygon
 import hu.aut.bme.android.polygame.service.BackgroundSoundService
 import kotlinx.android.synthetic.main.activity_main.*
-import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,10 +42,31 @@ class MainActivity : AppCompatActivity() {
     private val RC_LOOK_AT_MATCHES = 10001
     private val RC_SELECT_PLAYERS = 9010
 
+    private var multiSpinnerPos = 0
+
+    private val EASY_MATCH = 0
+    private val MEDIUM_MATCH = 1
+    private val HARD_MATCH = 2
+    private val VERY_HARD_MATCH = 3
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         svc = Intent(this, BackgroundSoundService::class.java)
+        spinnerMultiPlayer.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            resources.getStringArray(R.array.game_difficulty))
+        spinnerMultiPlayer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                multiSpinnerPos = position
+            }
+
+        }
         startService(svc)
     }
 
@@ -121,6 +140,7 @@ class MainActivity : AppCompatActivity() {
                     RoomConfig.createAutoMatchCriteria(minAutoPlayers, maxAutoPlayers, 0)
                 )
             }
+            builder.setVariant(multiSpinnerPos)
             mTurnBasedMultiplayerClient!!.createMatch(builder.build()).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     mMatch = task.result
@@ -131,7 +151,7 @@ class MainActivity : AppCompatActivity() {
                     else {
                         gameDataByte = null
                         Polygon.resetModel()
-                        Polygon.loadGameField(1)
+                        Polygon.loadGameField(multiSpinnerPos)
                         startActivity((Intent(this, MultiplayerActivity::class.java)))
                     }
 

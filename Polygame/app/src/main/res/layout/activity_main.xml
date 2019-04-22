@@ -13,19 +13,18 @@
             android:onClick="onClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="128dp"
+            tools:layout_editor_absoluteX="0dp"
             android:id="@+id/btnMuliPlayer"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginBottom="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_marginTop="116dp"/>
     <Button
             android:text="@string/singleplayer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onClick"
-            tools:layout_editor_absoluteX="128dp"
+            tools:layout_editor_absoluteX="0dp"
             android:id="@+id/btnSinglePlayer"
-            app:layout_constraintTop_toBottomOf="@+id/btnMuliPlayer"/>
+            android:layout_marginTop="24dp" app:layout_constraintTop_toBottomOf="@+id/spinnerMultiPlayer"/>
 
     <Button
             android:text="Invations/matches"
@@ -56,5 +55,13 @@
             android:layout_marginStart="8dp"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"/>
+
+    <Spinner
+            android:layout_width="203dp"
+            android:layout_height="0dp"
+            android:id="@+id/spinnerMultiPlayer" android:layout_marginTop="8dp"
+            android:spinnerMode="dialog"
+            app:layout_constraintTop_toBottomOf="@+id/btnMuliPlayer" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
 
 </android.support.constraint.ConstraintLayout>

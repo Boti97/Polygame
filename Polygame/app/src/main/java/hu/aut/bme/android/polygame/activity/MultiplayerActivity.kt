@@ -170,8 +170,6 @@ class MultiplayerActivity : AppCompatActivity(){
         val polyTypeToken = object : TypeToken<GameData>() {}.type
         val gameData: GameData = Gson().fromJson(data!!.toString(Charset.forName("UTF-8")), polyTypeToken)
         Polygon.currentLines = gameData.currentLines
-        /*multiplayerPolyView.touchedPoints.add(Polygon.currentLines[Polygon.currentLines.size-1].pointA)
-        multiplayerPolyView.touchedPoints.add(Polygon.currentLines[Polygon.currentLines.size-1].pointB)*/
         Polygon.fieldPoints = gameData.fieldPoints
         if(match!!.getParticipantId(MainActivity.mPlayer!!.playerId) == "p_1")
             Polygon.currentPlayer = PlayerColor.BLUE
@@ -180,6 +178,7 @@ class MultiplayerActivity : AppCompatActivity(){
         multiplayerScore.setPlayerOneScore(gameData.playerOneScore)
         multiplayerScore.setPlayerTwoScore(gameData.playerTwoScore)
         multiplayerPolyView.invalidate()
+        checkWinner()
     }
 
     private val matchUpdateCallback = object : TurnBasedMatchUpdateCallback() {
@@ -206,8 +205,6 @@ class MultiplayerActivity : AppCompatActivity(){
             gameLogic.setupAndFindPolygons()
             gameLogic.paintInnerPolygons()
             paintPoints()
-            Polygon.fieldPoints
-            Polygon.currentLines
             val sum = gameLogic.setScore()
             if(Polygon.currentPlayer == PlayerColor.BLUE)
                 multiplayerScore.setPlayerOneScore(sum)
@@ -253,12 +250,14 @@ class MultiplayerActivity : AppCompatActivity(){
 
     fun onOkClick(view: View){
         resultDialog.dismiss()
+        mTurnBasedMultiplayerClient!!.finishMatch(match!!.matchId)
         finish()
     }
 
     fun onRematchClick(view: View){
         clearPolygonAndGameLogic()
         multiplayerScore.resetScoreBoard()
+        mTurnBasedMultiplayerClient!!.finishMatch(match!!.matchId)
         resultDialog.dismiss()
         //nincs implementálva
         finish()

@@ -21,11 +21,11 @@ class SingleplayerSettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_singleplayer_settings)
 
-        spinner.adapter = ArrayAdapter(
+        spinnerSinglePlayer.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_dropdown_item,
             resources.getStringArray(R.array.game_difficulty))
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerSinglePlayer.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }

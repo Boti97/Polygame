@@ -28,3 +28,4 @@
 2019.04.16.	3,5	Megjelenítési hibák javítása
 2019.04.19.	4	Megjelenítési hibák javítása
 2019.04.19.	3	Megjelenítési hibák javítása
+2019.04.19.	1	Mutliplayer nehézségi szintek implementálása
